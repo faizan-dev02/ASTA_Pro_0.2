@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASTA PRO | Intelligent Travel Planner</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #4f46e5; --accent: #f43f5e; --glass: rgba(255, 255, 255, 0.09); --dark-glass: rgba(15, 23, 42, 0.85); --text: #f8fafc; }
+        * { box-sizing: border-box; margin:0; padding:0; }
+        body { font-family: 'Inter', sans-serif; background: #0f172a; color: var(--text); min-height: 100vh; }
+        .bg-overlay { position: fixed; inset: 0; background: {% if result %} url('{{ result.bg }}') {% else %} url('https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=1600&q=80') {% endif %}; background-size: cover; background-position: center; filter: brightness(0.3) blur(5px); z-index: -1; transition: 1s; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 3rem 1.5rem; position: relative; }
+        .form-card { background: var(--dark-glass); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); border-radius: 1.5rem; padding: 2.5rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); margin-bottom: 3rem; }
+        h2 { text-align: center; font-size: 2.25rem; font-weight: 800; background: linear-gradient(90deg, #a5b4fc, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .input-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+        .input-group { display: flex; flex-direction: column; gap: 0.5rem; }
+        input { padding: 0.8rem 1.2rem; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: white; }
+        .btn-submit { grid-column: 1 / -1; background: linear-gradient(90deg, #6366f1, #a855f7); color: white; border: none; padding: 1rem; border-radius: 0.75rem; font-weight: 700; cursor: pointer; transition: 0.3s; }
+        .btn-submit:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(99,102,241,0.3); }
+        .dashboard { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+        .card { background: var(--glass); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 1.25rem; padding: 1.5rem; }
+        .header-card { grid-column: 1 / -1; background: rgba(99,102,241,0.2); display: flex; justify-content: space-between; align-items: center; }
+        .map-frame { grid-column: span 2; height: 400px; border-radius: 1.25rem; overflow: hidden; }
+        .daily-amount { font-size: 3rem; font-weight: 800; color: #34d399; margin: 1rem 0; }
+        footer { text-align: center; padding: 4rem; opacity: 0.6; }
+        @media (max-width: 900px) { .dashboard { grid-template-columns: 1fr; } .map-frame { grid-column: 1 / -1; } }
+        @keyframes pulse {
+            0% {opacity: 1;}
+            50% {opacity: 0.4;}
+            100%{opacity: 1;}
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-overlay"></div>
+    <div class="container">
+        <div class="form-card">
+            <h2>ASTA PRO TRAVELER</h2>
+            <form class="input-grid" method="POST">
+                <div class="input-group"><label>From</label><input name="source" value="{{ saved.source }}" placeholder="City name" required></div>
+                <div class="input-group"><label>To</label><input name="destination" value="{{ saved.dest }}" placeholder="City name" required></div>
+                <div class="input-group"><label>Budget (₹)</label><input type="number" name="budget" value="{{ saved.budget }}" required></div>
+                <div class="input-group"><label>Days</label><input type="number" name="days" value="{{ saved.days }}" required></div>
+                <div class="input-group"><label>People</label><input type="number" name="people" value="{{ saved.people }}" required></div>
+                <button type="submit" class="btn-submit">Plan My Trip</button>
+            </form>
+            <div style="text-align:center; margin-top:1rem;"><a href="/login" style="color:#a5b4fc; text-decoration:none; font-size:0.9rem;">Admin Access</a></div>
+        </div>
+
+        {% if result %}
+        <div class="dashboard">
+            <div class="header-card card">
+                <div><h1>{{ result.to }} Expedition</h1><p>{{ result.days }} days • {{ result.people }} travelers</p></div>
+                <div style="font-weight:800; background:var(--accent); padding:0.5rem 1rem; border-radius:2rem;">{{ result.dist }} KM</div>
+            </div>
+           
+            <div class="map-frame card"><iframe src="{{ result.map }}" style="width:100%; height:100%; border:0;" allowfullscreen></iframe></div>
+            <div class="card">
+                <h3><i class="fas fa-wallet"></i> Daily/Person</h3>
+                <div class="daily-amount">₹{{ result.daily }}</div>
+                <p>Stay: ₹{{ result.stay }} | Transport: ₹{{ result.transport }}</p>
+                <hr style="margin:1rem 0; opacity:0.1;">
+                <h3><i class="fas fa-star"></i> Top Spots</h3>
+                <ul style="margin:1rem 0 0 1.5rem;">{% for s in result.spots %}<li>{{ s }}</li>{% endfor %}</ul></div>
+                 <div style="grid-column: 1 / -1; text-align: center; margin-top: 2rem;">
+    <button onclick="window.print()" class="btn-submit" 
+            style="background: #10b981; padding: 12px 30px; width: auto; font-size: 1rem;">
+        <i class="fas fa-file-pdf"></i> Download Itinerary
+    </button>
+
+        </div>
+        {% endif %}
+    </div>
+    
+    <footer>
+        <p style="margin-bottom:0.5rem;">ASTA PRO • BCA Final Year Project • 2026</p>
+        <p style="font-size:0.9rem;">Made with ❤️ by Mohamed Faizan & Team</p>
+    </footer>    
+</body>
+</html>
