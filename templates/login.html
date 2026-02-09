@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASTA PRO | Admin Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #4f46e5; --dark-glass: rgba(15, 23, 42, 0.9); --text: #f8fafc; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0f172a url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1600&q=80');
+            background-size: cover; background-position: center;
+            height: 100vh; display: flex; align-items: center; justify-content: center; margin: 0;
+        }
+        .login-card {
+            background: var(--dark-glass); backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1); padding: 3rem;
+            border-radius: 1.5rem; width: 100%; max-width: 400px; text-align: center;
+        }
+        h1 { background: linear-gradient(90deg, #a5b4fc, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 2rem; }
+        .input-group { text-align: left; margin-bottom: 1.5rem; }
+        label { display: block; margin-bottom: 0.5rem; color: #94a3b8; font-size: 0.9rem; }
+        input { width: 100%; padding: 0.8rem; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: white; box-sizing: border-box; }
+        .btn-login { width: 100%; padding: 1rem; border-radius: 0.75rem; border: none; background: linear-gradient(90deg, #6366f1, #a855f7); color: white; font-weight: 700; cursor: pointer; }
+        .error-msg { color: #f87171; margin-bottom: 1rem; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <h1>Admin Portal</h1>
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}{% for m in messages %}<p class="error-msg">{{ m }}</p>{% endfor %}{% endif %}
+        {% endwith %}
+        <form method="POST">
+            <div class="input-group"><label>Username</label><input type="text" name="username" required></div>
+            <div class="input-group"><label>Password</label><input type="password" name="password" required></div>
+            <button type="submit" class="btn-login">Login</button>
+        </form>
+        <a href="/" style="display:block; margin-top:1.5rem; color:#94a3b8; text-decoration:none; font-size:0.8rem;">← Back to Home</a>
+    </div>
+</body>
+</html>
